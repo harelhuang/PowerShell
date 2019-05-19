@@ -1,0 +1,22 @@
+ $stream = [System.IO.File]::OpenRead("D:\nutcloud\绘图\debug_cache.bin")
+ $chunkNum = 0
+ $length = 63
+ [Int64]$curOffset = 0
+ $barr = New-Object byte[] 1024000
+ 
+ while($bytesRead = $stream.Read($barr,0,1024000)){
+   $chunkNum += 1
+   $curOffset += $bytesRead
+   $stream.seek($curOffset,0);
+ }
+$curOffset
+$HRCW = [System.IO.File]::ReadAllBytes("D:\nutcloud\绘图\rcw_8308.bin")
+$bytes = [System.IO.File]::ReadAllBytes("D:\nutcloud\绘图\debug_cache.bin")
+for($i=0;$i -le $length;$i++)
+{
+        $bytes[$i] = $HRCW[$i];
+}
+$bytes[64] = $curOffset -shr 16
+$bytes[65] = ($curOffset - $bytes[64]*65536) -shr 8
+$bytes[66] = $curOffset - $bytes[64]*65536 - $bytes[65]*256
+[System.IO.File]::WriteAllBytes("D:\nutcloud\绘图\rcw_8309.bin",$bytes[0..($curOffset-1)])
