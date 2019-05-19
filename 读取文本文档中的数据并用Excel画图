@@ -1,0 +1,19 @@
+$excel = New-Object -ComObject Excel.Application
+$excel.Visible = $true
+$workbook = $Excel.Workbooks.Add()
+$worksheet = $workbook.Worksheets.Item(1)
+$workbook.worksheets.item(1).name = "Processes"
+[array]$test=get-content .\data.txt
+for($i=1;$i -le $test.Length;$i++)
+{
+    $worksheet.cells.item($i,1) = $i
+    $worksheet.cells.item($i,2) = $test[$i]
+}
+
+$range=$worksheet.Columns[2]
+$chart=$worksheet.ChartObjects()
+$chart_t=$chart.Add(0,0,1000,200)
+$chart_t.Chart.SetSourceData($range,2)
+$chart_t.Chart.ChartType = 4; 
+$chart_t.Chart._ApplyDataLabels(5)
+$chart_t.Chart.ChartStyle=2
